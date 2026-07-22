@@ -6,6 +6,15 @@ using CVManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Disable file watching in production to avoid inotify limits
+if (builder.Environment.IsProduction())
+{
+    builder.Configuration.Sources
+        .OfType<Microsoft.Extensions.Configuration.Json.JsonConfigurationSource>()
+        .ToList()
+        .ForEach(s => s.ReloadOnChange = false);
+}
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
