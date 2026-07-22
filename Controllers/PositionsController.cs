@@ -6,7 +6,7 @@ using CVManagementSystem.Services;
 
 namespace CVManagementSystem.Controllers;
 
-[Authorize(Roles = "Recruiter,Admin")]
+[Authorize] // Changed from specific roles to just authenticated
 public class PositionsController : Controller
 {
     private readonly PositionService _positionService;
@@ -19,15 +19,15 @@ public class PositionsController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles = "Candidate,Recruiter,Admin")]
     public async Task<IActionResult> Browse()
     {
-        // This action is for Candidates to view available positions
+        // This action is for all authenticated users to view available positions
         var positions = await _positionService.GetAllPositions().ToListAsync();
         return View("Browse", positions);
     }
 
     [HttpGet]
+    [Authorize(Roles = "Recruiter,Admin")] // Only recruiters and admins can see their positions list
     public async Task<IActionResult> Index()
     {
         var positions = _positionService.GetAllPositions();
@@ -42,6 +42,7 @@ public class PositionsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Recruiter,Admin")]
     public async Task<IActionResult> Create()
     {
         var attributes = await _attributeService.GetAllAttributes().ToListAsync();
@@ -51,6 +52,7 @@ public class PositionsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Recruiter,Admin")]
     public async Task<IActionResult> Create(string title, string description, int[] selectedAttributeIds)
     {
         if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(description) || selectedAttributeIds.Length == 0)
@@ -79,6 +81,7 @@ public class PositionsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Recruiter,Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var position = await _positionService.GetPositionByIdAsync(id);
@@ -99,6 +102,7 @@ public class PositionsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Recruiter,Admin")]
     public async Task<IActionResult> Edit(int id, string title, string description, int[] selectedAttributeIds)
     {
         var position = await _positionService.GetPositionByIdAsync(id);
@@ -126,6 +130,7 @@ public class PositionsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Recruiter,Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var position = await _positionService.GetPositionByIdAsync(id);
@@ -143,6 +148,7 @@ public class PositionsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Recruiter,Admin")]
     public async Task<IActionResult> Duplicate(int id)
     {
         var position = await _positionService.GetPositionByIdAsync(id);
