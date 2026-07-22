@@ -22,7 +22,8 @@ builder.Services.AddScoped<AdminService>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (builder.Environment.IsProduction())
+    // Use PostgreSQL for production or if connection string contains "Host="
+    if (builder.Environment.IsProduction() || connectionString.Contains("Host="))
     {
         options.UseNpgsql(connectionString);
     }
