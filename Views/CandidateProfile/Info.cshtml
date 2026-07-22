@@ -1,0 +1,70 @@
+@model CVManagementSystem.Models.ViewModels.CandidateProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile Information";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Profile Information</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">First Name</h6>
+                            <p class="h5">@Model.FirstName</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Last Name</h6>
+                            <p class="h5">@Model.LastName</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Email</h6>
+                            <p class="h5">@Model.Email</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Location</h6>
+                            <p class="h5">@(string.IsNullOrEmpty(Model.Location) ? "Not specified" : Model.Location)</p>
+                        </div>
+                    </div>
+
+                    @if (Model.AvailableAttributes.Any(a => !string.IsNullOrEmpty(a.CurrentValue)))
+                    {
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Professional Attributes</h5>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var attr in Model.AvailableAttributes.Where(a => !string.IsNullOrEmpty(a.CurrentValue)))
+                                {
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <h6 class="text-muted">@attr.Name</h6>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p class="h6">@attr.CurrentValue</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <small class="text-muted">Last updated: @Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss")</small>
+                    </div>
+
+                    <div class="mt-4">
+                        <a asp-action="Me" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

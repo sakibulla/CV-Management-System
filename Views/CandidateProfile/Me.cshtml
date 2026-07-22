@@ -1,0 +1,100 @@
+@model CVManagementSystem.Models.ViewModels.CandidateProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">My Profile</h2>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @Html.ValidationSummary(false)
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="UpdateInfo">
+                        <input type="hidden" asp-for="ProfileId" />
+                        <input type="hidden" asp-for="UserId" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" asp-for="FirstName" class="form-control" placeholder="First Name">
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" asp-for="LastName" class="form-control" placeholder="Last Name">
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" value="@Model.Email" disabled>
+                            <small class="text-muted">Email cannot be changed</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" asp-for="Location" class="form-control" placeholder="City, Country">
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Professional Attributes</h5>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var attr in Model.AvailableAttributes)
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label">@attr.Name</label>
+                                        @if (!string.IsNullOrEmpty(attr.Description))
+                                        {
+                                            <small class="text-muted d-block">@attr.Description</small>
+                                        }
+                                        <input type="text" 
+                                               name="AttributeValues[@attr.Id]" 
+                                               class="form-control" 
+                                               value="@(Model.AttributeValues.ContainsKey(attr.Id) ? Model.AttributeValues[attr.Id] : attr.CurrentValue)"
+                                               placeholder="Enter @attr.Name.ToLower()">
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <small class="text-muted">Last updated: @Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss")</small>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a asp-action="Info" class="btn btn-secondary">View Profile</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,82 @@
+@model CVManagementSystem.Models.ViewModels.AdminEditProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit Candidate Profile";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Edit Candidate Profile</h2>
+                    <small>Editing profile for: @Model.Email</small>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="EditProfile" asp-route-userId="@Model.UserId">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-3">
+                            <label for="FirstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="FirstName" name="FirstName" value="@Model.FirstName" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="LastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="LastName" name="LastName" value="@Model.LastName" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="Location" name="Location" value="@Model.Location" placeholder="e.g., New York, USA" />
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h5 class="mb-3">Profile Attributes</h5>
+                        @if (Model.ProfileAttributes.Any())
+                        {
+                            foreach (var attr in Model.ProfileAttributes)
+                            {
+                                <div class="mb-3">
+                                    <label for="attr_@attr.Id" class="form-label">
+                                        @attr.Name
+                                        @if (!string.IsNullOrEmpty(attr.Description))
+                                        {
+                                            <small class="text-muted">(@attr.Description)</small>
+                                        }
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="attr_@attr.Id" 
+                                           name="AttributeValues[@attr.Id]" 
+                                           value="@attr.CurrentValue" 
+                                           placeholder="Enter value for @attr.Name" />
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                No attributes available. Recruiters need to create attributes first.
+                            </div>
+                        }
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a asp-action="UserDetails" asp-route-id="@Model.UserId" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

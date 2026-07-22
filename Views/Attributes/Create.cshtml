@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Create Attribute";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Create New Attribute</h2>
+                </div>
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @Html.ValidationSummary(false)
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Create">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Attribute Name *</label>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="e.g., Years of Experience" required>
+                            <small class="form-text text-muted">Enter a descriptive name for this attribute</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Attribute Type *</label>
+                            <select id="type" name="type" class="form-control" required onchange="toggleDropdownOptions()">
+                                <option value="">Select Type</option>
+                                <option value="Text">Text</option>
+                                <option value="Number">Number</option>
+                                <option value="Dropdown">Dropdown</option>
+                            </select>
+                            <small class="form-text text-muted">Choose the input type for candidates</small>
+                        </div>
+
+                        <div class="mb-3" id="dropdownOptionsContainer" style="display: none;">
+                            <label for="dropdownOptions" class="form-label">Dropdown Options *</label>
+                            <textarea id="dropdownOptions" name="dropdownOptions" class="form-control" rows="4" placeholder="Enter options separated by commas&#10;e.g., Option 1, Option 2, Option 3"></textarea>
+                            <small class="form-text text-muted">Separate each option with a comma (minimum 2 options required)</small>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Create Attribute</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleDropdownOptions() {
+            const typeSelect = document.getElementById("type");
+            const dropdownOptionsContainer = document.getElementById("dropdownOptionsContainer");
+            const dropdownOptionsTextarea = document.getElementById("dropdownOptions");
+            
+            if (typeSelect.value === "Dropdown") {
+                dropdownOptionsContainer.style.display = "block";
+                dropdownOptionsTextarea.required = true;
+            } else {
+                dropdownOptionsContainer.style.display = "none";
+                dropdownOptionsTextarea.required = false;
+                dropdownOptionsTextarea.value = "";
+            }
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

@@ -1,0 +1,76 @@
+@model List<CVManagementSystem.Models.ViewModels.CVListViewModel>
+
+@{
+    ViewData["Title"] = "My CVs";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2>My CVs</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a asp-controller="Positions" asp-action="Browse" class="btn btn-primary">+ Create New CV</a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <p>No CVs created yet. <a asp-controller="Positions" asp-action="Browse">Browse positions and create a CV</a></p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>CV Title</th>
+                        <th>Position</th>
+                        <th>Created</th>
+                        <th>Updated</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cv in Model.OrderByDescending(c => c.CreatedAt))
+                    {
+                        <tr>
+                            <td>
+                                <strong>@cv.Title</strong>
+                            </td>
+                            <td>@cv.PositionTitle</td>
+                            <td>@cv.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>@cv.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@cv.Id" class="btn btn-sm btn-outline-info">View</a>
+                                <a asp-action="Edit" asp-route-id="@cv.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <form method="post" asp-action="Delete" asp-route-id="@cv.Id" style="display:inline;" 
+                                      onsubmit="return confirm('Are you sure you want to delete this CV?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,94 @@
+@model List<CVManagementSystem.Models.ViewModels.RecruiterCVListViewModel>
+
+@{
+    ViewData["Title"] = "CVs for Position";
+    var positionTitle = ViewData["PositionTitle"]?.ToString() ?? "Unknown Position";
+    var positionId = ViewData["PositionId"] as int? ?? 0;
+}
+
+<div class="container mt-5 mb-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Positions" asp-action="Index">Positions</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Positions" asp-action="Details" asp-route-id="@positionId">@positionTitle</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Candidate CVs</li>
+                </ol>
+            </nav>
+            <h2>CVs for Position: @positionTitle</h2>
+            <p class="text-muted">View all candidate CVs submitted for this position</p>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No CVs have been submitted for this position yet.
+        </div>
+        <div class="mt-3">
+            <a asp-controller="Positions" asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Positions
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Candidate Name</th>
+                                <th>CV Title</th>
+                                <th>Email</th>
+                                <th>Created</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cv in Model.OrderByDescending(c => c.UpdatedAt))
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@cv.CandidateName</strong>
+                                    </td>
+                                    <td>@cv.Title</td>
+                                    <td>
+                                        <small class="text-muted">@cv.CandidateEmail</small>
+                                    </td>
+                                    <td>@cv.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                    <td>@cv.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>
+                                        <a asp-action="ViewCV" asp-route-id="@cv.Id" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <p class="text-muted mb-0">
+                        Total CVs for this position: <strong>@Model.Count</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a asp-controller="Positions" asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Positions
+            </a>
+            <a asp-action="CVs" class="btn btn-outline-primary">
+                <i class="bi bi-list"></i> View All CVs
+            </a>
+        </div>
+    }
+</div>

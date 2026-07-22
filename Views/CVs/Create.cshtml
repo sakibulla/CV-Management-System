@@ -1,0 +1,105 @@
+@model CVManagementSystem.Models.ViewModels.CVFormViewModel
+
+@{
+    ViewData["Title"] = "Create CV";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-9 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Create CV for @Model.PositionTitle</h2>
+                </div>
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @Html.ValidationSummary(false)
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Create" asp-route-positionId="@Model.PositionId">
+                        <input type="hidden" asp-for="PositionId" />
+
+                        <div class="mb-4">
+                            <label class="form-label">CV Title *</label>
+                            <input type="text" asp-for="Title" class="form-control" placeholder="e.g., Senior Developer CV" required>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <!-- Attributes Section -->
+                        <div class="card mt-4 mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Position Attributes</h5>
+                            </div>
+                            <div class="card-body">
+                                @if (!Model.Attributes.Any())
+                                {
+                                    <p class="text-muted">No attributes for this position.</p>
+                                }
+                                else
+                                {
+                                    @foreach (var attr in Model.Attributes)
+                                    {
+                                        <div class="mb-3">
+                                            <label class="form-label">@attr.AttributeName</label>
+                                            <input type="text" 
+                                                   name="AttributeValues[@attr.PositionAttributeId]" 
+                                                   class="form-control"
+                                                   placeholder="Enter @attr.AttributeName.ToLower()">
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Projects Section -->
+                        <div class="card mt-4 mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Select Projects</h5>
+                            </div>
+                            <div class="card-body">
+                                @if (!Model.AvailableProjects.Any())
+                                {
+                                    <p class="text-muted">No projects available. <a asp-controller="Projects" asp-action="Create">Create a project first</a></p>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        @foreach (var project in Model.AvailableProjects)
+                                        {
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" 
+                                                           type="checkbox" 
+                                                           id="project_@project.Id" 
+                                                           name="SelectedProjectIds" 
+                                                           value="@project.Id"
+                                                           @(project.IsSelected ? "checked" : "")>
+                                                    <label class="form-check-label" for="project_@project.Id">
+                                                        @project.Name
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Create CV</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

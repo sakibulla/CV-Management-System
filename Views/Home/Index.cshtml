@@ -1,0 +1,87 @@
+﻿@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "User";
+    var userRoles = User.FindAll(ClaimTypes.Role);
+    var role = userRoles.FirstOrDefault()?.Value ?? "User";
+}
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1>Welcome, @userName!</h1>
+        <p class="text-muted">Role: <span class="badge bg-primary">@role</span></p>
+    </div>
+</div>
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">User Management</h5>
+                    <p class="card-text">Manage system users and roles</p>
+                    <a href="@Url.Action("Users", "Admin")" class="btn btn-primary">Go to Users</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Recruiter"))
+{
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Positions</h5>
+                    <p class="card-text">Create and manage job positions</p>
+                    <a href="@Url.Action("Index", "Positions")" class="btn btn-primary">Manage Positions</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Attributes</h5>
+                    <p class="card-text">Define position attributes</p>
+                    <a href="@Url.Action("Index", "Attributes")" class="btn btn-primary">Manage Attributes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Candidate"))
+{
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">My Profile</h5>
+                    <p class="card-text">Update your profile information</p>
+                    <a href="@Url.Action("Index", "CandidateProfile")" class="btn btn-primary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">My Projects</h5>
+                    <p class="card-text">Manage your portfolio projects</p>
+                    <a href="@Url.Action("Index", "Projects")" class="btn btn-primary">Manage Projects</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">My CVs</h5>
+                    <p class="card-text">Create and manage your CVs</p>
+                    <a href="@Url.Action("Index", "CVs")" class="btn btn-primary">Manage CVs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

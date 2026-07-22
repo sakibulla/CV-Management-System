@@ -1,0 +1,76 @@
+@using CVManagementSystem.Models.Domain
+
+@model Position
+
+@{
+    ViewData["Title"] = "Position Details";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h2 class="mb-0">@Model.Title</h2>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="text-muted">Description</h5>
+                        <p>@Model.Description</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="text-muted">Required Attributes</h5>
+                        @if (Model.Attributes != null && Model.Attributes.Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var attr in Model.Attributes)
+                                {
+                                    <div class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">@attr.Name</h6>
+                                            <span class="badge bg-secondary">@attr.Type</span>
+                                        </div>
+                                        @if (attr.Type == "Dropdown" && !string.IsNullOrEmpty(attr.DropdownOptions))
+                                        {
+                                            <small class="text-muted d-block">
+                                                Options: @attr.DropdownOptions
+                                            </small>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No attributes specified</p>
+                        }
+                    </div>
+
+                    <div class="mb-4 text-muted">
+                        <small>
+                            Created: @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+                            <br />
+                            Last Updated: @Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm")
+                        </small>
+                    </div>
+
+                    <div class="mt-4">
+                        @if (User.IsInRole("Recruiter") || User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="Recruiter" asp-action="PositionCVs" asp-route-positionId="@Model.Id" 
+                               class="btn btn-primary">View CVs for this Position</a>
+                            <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning">Edit</a>
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">Back to Positions</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">Back to Positions</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

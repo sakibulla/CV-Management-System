@@ -1,0 +1,96 @@
+@model CVManagementSystem.Models.ViewModels.SearchResultsViewModel
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Search</h2>
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <form method="post" asp-action="Search" class="input-group">
+                <input type="text" name="query" class="form-control" placeholder="Search positions or CVs..." value="@Model.Query">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    @if (string.IsNullOrEmpty(Model.Query))
+    {
+        <div class="alert alert-info">
+            <p>Enter a search term to find positions or CVs.</p>
+        </div>
+    }
+    else if (Model.Positions.Count == 0 && Model.CVs.Count == 0)
+    {
+        <div class="alert alert-info">
+            <p>No results found for "<strong>@Model.Query</strong>"</p>
+        </div>
+    }
+    else
+    {
+        @if (Model.Positions.Any())
+        {
+            <div class="mt-5">
+                <h3 class="mb-3">Positions (<span class="badge bg-primary">@Model.Positions.Count</span>)</h3>
+                <div class="row">
+                    @foreach (var position in Model.Positions)
+                    {
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@position.Title</h5>
+                                    <p class="card-text text-muted">@(position.Description.Length > 100 ? position.Description.Substring(0, 100) + "..." : position.Description)</p>
+                                    <small class="text-muted">Posted by @position.CreatedByName on @position.CreatedAt.ToString("yyyy-MM-dd")</small>
+                                </div>
+                                <div class="card-footer bg-light">
+                                    <a asp-controller="Positions" asp-action="Details" asp-route-id="@position.Id" class="btn btn-sm btn-outline-primary">View Position</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Model.CVs.Any())
+        {
+            <div class="mt-5">
+                <h3 class="mb-3">CVs (<span class="badge bg-success">@Model.CVs.Count</span>)</h3>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>CV Title</th>
+                                <th>Position</th>
+                                <th>Candidate</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cv in Model.CVs.OrderByDescending(c => c.CreatedAt))
+                            {
+                                <tr>
+                                    <td><strong>@cv.Title</strong></td>
+                                    <td>@cv.PositionTitle</td>
+                                    <td>@cv.CandidateName</td>
+                                    <td>@cv.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        <a asp-controller="CVs" asp-action="Details" asp-route-id="@cv.Id" class="btn btn-sm btn-outline-info">View</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,87 @@
+@model CVManagementSystem.Models.ViewModels.CVDetailViewModel
+
+@{
+    ViewData["Title"] = "CV Details";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">@Model.Title</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Position</h6>
+                            <p class="h5">@Model.PositionTitle</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Created</h6>
+                            <p class="h5">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Last Updated</h6>
+                            <p class="h5">@Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</p>
+                        </div>
+                    </div>
+
+                    @if (Model.Attributes.Any())
+                    {
+                        <div class="card mt-4 mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Attributes</h5>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var attr in Model.Attributes)
+                                {
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <h6 class="text-muted">@attr.AttributeName</h6>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p class="h6">@attr.Value</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.Projects.Any())
+                    {
+                        <div class="card mt-4 mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Associated Projects</h5>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var project in Model.Projects)
+                                {
+                                    <div class="mb-4">
+                                        <h6 class="text-primary">@project.Name</h6>
+                                        <p class="text-muted mb-2">@project.Description</p>
+                                        @if (!string.IsNullOrEmpty(project.Technologies))
+                                        {
+                                            <small class="badge bg-info">
+                                                @string.Join(", ", project.Technologies.Split(',').Select(t => t.Trim()).Take(5))
+                                            </small>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit CV</a>
+                        <a asp-action="Index" class="btn btn-secondary">Back to CVs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

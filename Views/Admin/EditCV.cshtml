@@ -1,0 +1,101 @@
+@model CVManagementSystem.Models.ViewModels.AdminEditCVViewModel
+
+@{
+    ViewData["Title"] = "Edit CV";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Edit CV (Admin)</h2>
+                    <small>Candidate: @Model.CandidateName | Position: @Model.PositionTitle</small>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="EditCV" asp-route-cvId="@Model.Id">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-4">
+                            <label for="Title" class="form-label">CV Title</label>
+                            <input type="text" class="form-control" id="Title" name="Title" value="@Model.Title" required />
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h5 class="mb-3">Position Attributes</h5>
+                        @if (Model.Attributes.Any())
+                        {
+                            <div class="row">
+                                @foreach (var attr in Model.Attributes)
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <label for="attr_@attr.PositionAttributeId" class="form-label">@attr.AttributeName</label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="attr_@attr.PositionAttributeId" 
+                                               name="AttributeValues[@attr.PositionAttributeId]" 
+                                               value="@attr.CurrentValue" 
+                                               placeholder="Enter value for @attr.AttributeName" />
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                No attributes assigned to this position.
+                            </div>
+                        }
+
+                        <hr class="my-4" />
+
+                        <h5 class="mb-3">Projects</h5>
+                        @if (Model.AvailableProjects.Any())
+                        {
+                            <div class="row">
+                                @foreach (var project in Model.AvailableProjects)
+                                {
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" 
+                                                   type="checkbox" 
+                                                   name="SelectedProjectIds" 
+                                                   value="@project.Id" 
+                                                   id="project_@project.Id"
+                                                   @(project.IsSelected ? "checked" : "") />
+                                            <label class="form-check-label" for="project_@project.Id">
+                                                @project.Name
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                Candidate has no projects yet.
+                            </div>
+                        }
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a asp-controller="Recruiter" asp-action="ViewCV" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

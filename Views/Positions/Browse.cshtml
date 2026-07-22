@@ -1,0 +1,64 @@
+@using CVManagementSystem.Models.Domain
+@model List<Position>
+
+@{
+    ViewData["Title"] = "Browse Positions";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Available Positions</h2>
+            <p class="text-muted">Browse job positions and create tailored CVs for them</p>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <p>No positions available at the moment. Please check back later.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var position in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@position.Title</h5>
+                            <p class="card-text text-muted">@position.Description</p>
+                            
+                            <div class="mb-3">
+                                <h6 class="text-muted">Required Skills:</h6>
+                                @if (position.Attributes != null && position.Attributes.Any())
+                                {
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach (var attr in position.Attributes)
+                                        {
+                                            <span class="badge bg-secondary">@attr.Name</span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-muted small">No specific requirements</p>
+                                }
+                            </div>
+
+                            <div class="text-muted small mb-3">
+                                <i class="bi bi-calendar"></i> Posted: @position.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-controller="CVs" asp-action="Create" asp-route-positionId="@position.Id" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-file-earmark-plus"></i> Create CV for this Position
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

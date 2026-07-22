@@ -1,0 +1,102 @@
+@model List<CVManagementSystem.Models.ViewModels.RecruiterCVListViewModel>
+
+@{
+    ViewData["Title"] = "Browse Candidate CVs";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Candidate CVs</h2>
+            <p class="text-muted">View and search all candidate CVs in the system</p>
+        </div>
+        <div class="col-md-4">
+            <form method="get" asp-action="CVs" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" 
+                       placeholder="Search by candidate or position..." 
+                       value="@ViewData["Search"]" />
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(ViewData["Search"]?.ToString()))
+    {
+        <div class="alert alert-info">
+            Showing results for: <strong>@ViewData["Search"]</strong>
+            <a asp-action="CVs" class="btn btn-sm btn-outline-secondary ms-2">Clear Search</a>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No CVs found.
+            @if (!string.IsNullOrEmpty(ViewData["Search"]?.ToString()))
+            {
+                <text>Try adjusting your search criteria.</text>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Candidate Name</th>
+                                <th>CV Title</th>
+                                <th>Position</th>
+                                <th>Created</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cv in Model.OrderByDescending(c => c.UpdatedAt))
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@cv.CandidateName</strong><br/>
+                                        <small class="text-muted">@cv.CandidateEmail</small>
+                                    </td>
+                                    <td>@cv.Title</td>
+                                    <td>
+                                        <a asp-controller="Positions" asp-action="Details" asp-route-id="@cv.PositionId" 
+                                           class="text-decoration-none">
+                                            @cv.PositionTitle
+                                        </a>
+                                    </td>
+                                    <td>@cv.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                    <td>@cv.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>
+                                        <a asp-action="ViewCV" asp-route-id="@cv.Id" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <p class="text-muted mb-0">
+                        Total CVs: <strong>@Model.Count</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
