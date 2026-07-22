@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Quick Admin Assignment";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Quick Role Assignment</h4>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Success != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @ViewBag.Success
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @ViewBag.Error
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="MakeAdmin">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">User Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required 
+                                   placeholder="Enter user email address">
+                            <div class="form-text">Enter the email of the user you want to assign a role to.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="roleName" class="form-label">Role</label>
+                            <select class="form-select" id="roleName" name="roleName" required>
+                                <option value="Admin">Admin</option>
+                                <option value="Recruiter">Recruiter</option>
+                                <option value="Candidate">Candidate</option>
+                            </select>
+                            <div class="form-text">Select the role to assign to this user.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Assign Role</button>
+                            <a href="@Url.Action("ListUsers")" class="btn btn-outline-secondary">View All Users</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="card-title">Instructions:</h6>
+                    <ol class="mb-0">
+                        <li>Enter the email address of an existing user</li>
+                        <li>Select the role you want to assign (Admin, Recruiter, or Candidate)</li>
+                        <li>Click "Assign Role" to update the user's role</li>
+                    </ol>
+                    <hr>
+                    <p class="mb-0 text-muted small">
+                        <strong>Note:</strong> This will remove any existing role and assign the new one.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
