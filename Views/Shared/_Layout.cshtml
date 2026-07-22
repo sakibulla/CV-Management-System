@@ -51,16 +51,10 @@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Positions" asp-action="Index">Positions</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Attributes" asp-action="Index">Attributes</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Recruiter" asp-action="CVs">Browse CVs</a>
-                                </li>
-                                <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="UserManagement">User Management</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="QuickAdmin" asp-action="MakeAdmin">Quick Admin</a>
                                 </li>
                             }
                         </ul>

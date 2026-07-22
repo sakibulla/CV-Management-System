@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using CVManagementSystem.Models.Domain;
 using CVManagementSystem.Models.ViewModels;
 using CVManagementSystem.Services;
@@ -42,24 +43,33 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> UserManagement()
     {
-        var users = _adminService.GetAllUsers();
-        var model = new List<UserListViewModel>();
-
-        foreach (var user in users)
+        try
         {
-            var role = await _adminService.GetUserRoleAsync(user.Id);
-            model.Add(new UserListViewModel
-            {
-                Id = user.Id,
-                Email = user.Email ?? string.Empty,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Role = role ?? "No Role",
-                IsBlocked = user.IsBlocked
-            });
-        }
+            var users = await _adminService.GetAllUsers().ToListAsync();
+            var model = new List<UserListViewModel>();
 
-        return View(model);
+            foreach (var user in users)
+            {
+                var role = await _adminService.GetUserRoleAsync(user.Id);
+                model.Add(new UserListViewModel
+                {
+                    Id = user.Id,
+                    Email = user.Email ?? string.Empty,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Role = role ?? "No Role",
+                    IsBlocked = user.IsBlocked
+                });
+            }
+
+            return View(model);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading user management page");
+            TempData["Error"] = $"Error loading users: {ex.Message}";
+            return View(new List<UserListViewModel>());
+        }
     }
 
     [HttpGet]
