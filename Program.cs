@@ -4,16 +4,11 @@ using CVManagementSystem.Data;
 using CVManagementSystem.Models.Domain;
 using CVManagementSystem.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+// Disable file watching completely
+Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
+Environment.SetEnvironmentVariable("DOTNET_HOTRELOAD_NAMEDPIPE_NAME", "");
 
-// Disable file watching in production to avoid inotify limits
-if (builder.Environment.IsProduction())
-{
-    builder.Configuration.Sources
-        .OfType<Microsoft.Extensions.Configuration.Json.JsonConfigurationSource>()
-        .ToList()
-        .ForEach(s => s.ReloadOnChange = false);
-}
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
